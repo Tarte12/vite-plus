@@ -14,6 +14,21 @@ Assert-Arguments (vp env exec node print-args.cjs -- -- --template react-ts) '["
 Assert-Arguments (vp env exec node print-args.cjs --) '["--"]'
 Assert-Arguments (vp env exec node print-args.cjs 'value with spaces' -- --template 'react ts') '["value with spaces","--","--template","react ts"]'
 
+# The stop-parsing token preserves its literal remainder without consuming --.
+# Capture on a separate line because --% makes the rest of the line literal.
+$literalArguments = vp env exec node print-args.cjs --% --
+Assert-Arguments $literalArguments '["--"]'
+$literalArguments = vp env exec node print-args.cjs --% -- --
+Assert-Arguments $literalArguments '["--","--"]'
+$literalArguments = vp env exec node print-args.cjs -- --% --
+Assert-Arguments $literalArguments '["--","--"]'
+
+# A quoted --% allows recovery; escaping its first dash still stops parsing.
+$literalArguments = vp env exec node print-args.cjs '--%' -- after
+Assert-Arguments $literalArguments '["--","after"]'
+$literalArguments = vp env exec node print-args.cjs `--% --
+Assert-Arguments $literalArguments '["--"]'
+
 $prefix = @('env', 'exec', 'node', 'print-args.cjs')
 $suffix = @('--template', 'react-ts')
 $allArguments = $prefix + @('--') + $suffix

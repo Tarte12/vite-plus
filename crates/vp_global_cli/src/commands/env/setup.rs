@@ -1125,7 +1125,8 @@ if ($__vp_command) {
         if ($__vp_element -is [System.Management.Automation.Language.VariableExpressionAst] -and $__vp_element.Splatted) {
             break
         }
-        if ($__vp_element.Extent.Text -ceq '--') {
+        # Only a parameter AST can be consumed. After --%, the separator is literal.
+        if ($__vp_element -is [System.Management.Automation.Language.CommandParameterAst] -and $__vp_element.Extent.Text -ceq '--') {
             if ($__vp_index -le $args.Count) {
                 $__vp_arguments = [System.Collections.Generic.List[object]]::new()
                 $__vp_arguments.AddRange($args)

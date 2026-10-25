@@ -90,7 +90,7 @@ Use the object form when a task needs other fields like `cache`, `dependsOn`, or
 
 - **Type:** `string | string[]`
 
-Defines the command to run for the task. Quoting, `&&`, pipes, and redirects all work as written on the command line. Vite Task runs simple commands and `&&` chains directly, and falls back to the system shell for other shell syntax. See [Environment Variable Prefixes](/guide/run#environment-variable-prefixes) for details.
+Defines the command to run for the task. Vite Task parses simple commands and `&&` chains itself, so they behave the same on every platform. Other shell syntax, such as pipes and redirects, may behave differently across platforms. See [Environment Variable Prefixes](/guide/run#environment-variable-prefixes) for details.
 
 ```ts [vite.config.ts]
 tasks: {
@@ -117,7 +117,7 @@ tasks: {
 
 Each task defined in `vite.config.ts` must include its own `command`. You cannot define a task in both `vite.config.ts` and `package.json` with the same task name.
 
-Commands joined with `&&` (or supplied as an array) are automatically split into independently cached sub-tasks. See [Compound Commands](/guide/run#compound-commands).
+Array entries, and `&&` chains without other shell syntax, are automatically split into independently cached sub-tasks. See [Compound Commands](/guide/run#compound-commands).
 
 ### `dependsOn`
 

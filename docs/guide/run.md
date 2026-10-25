@@ -6,6 +6,10 @@
 `vpr` is available as a standalone shorthand for `vp run`. All examples below work with both `vp run` and `vpr`.
 :::
 
+::: info
+Vite Task parses simple commands and [`&&` chains](#compound-commands) itself instead of passing them to a shell, so they behave the same on every platform. Commands that use other shell syntax, such as pipes or redirects, may behave differently across platforms.
+:::
+
 ## Overview
 
 Use `vp run` with existing `package.json` scripts:
@@ -232,7 +236,7 @@ vp run -w build
 
 ## Compound Commands
 
-Commands joined with `&&` are split into independent sub-tasks. Each sub-task is cached separately when [caching is enabled](/guide/cache#when-is-caching-enabled). This works for both `vite.config.ts` tasks and `package.json` scripts:
+Commands joined with `&&` are split into independent sub-tasks, unless they also use other shell syntax. Each sub-task is cached separately when [caching is enabled](/guide/cache#when-is-caching-enabled). This works for both `vite.config.ts` tasks and `package.json` scripts:
 
 ```json [package.json]
 {
@@ -268,19 +272,21 @@ vp run: 1/2 cache hit (50%), 2/2 successful, 120ms saved.
 
 ### Environment Variable Prefixes
 
-Vite Task parses simple commands and `&&` chains itself, including environment variable prefixes such as `FOO=bar command`. These work on every platform, including Windows, without `cross-env`:
+Because Vite Task parses simple commands itself, environment variable prefixes such as `FOO=bar command` work on every platform, including Windows, without `cross-env`:
 
 ```json [package.json]
 {
   "scripts": {
-    "build": "NODE_ENV=production vp build"
+    "build": "NODE_ENV=production node build.js"
   }
 }
 ```
 
-A prefix applies only to the command it precedes. In `FOO=1 a && b`, `FOO` is set for `a` but not for `b`.
+A prefix applies only to the command it directly precedes. In `FOO=1 a && b`, `FOO` is set for `a` but not for `b`.
 
-If any part of a command uses other shell syntax, such as pipes, redirects, or variable expansion, the whole command runs in the system shell instead: `/bin/sh -c` on macOS and Linux, and `cmd.exe /d /s /c` on Windows. In that case, `FOO=bar command` does not work on Windows, so use `cross-env` there.
+::: warning
+If a command also uses other shell syntax, such as pipes or redirects, environment variable prefixes may not work on Windows. Verify such commands at runtime, and use `cross-env` if needed.
+:::
 
 ### Nested `vp run`
 

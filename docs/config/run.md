@@ -90,7 +90,11 @@ Use the object form when a task needs other fields like `cache`, `dependsOn`, or
 
 - **Type:** `string | string[]`
 
-Defines the command to run for the task. Vite Task parses simple commands and `&&` chains itself, so they behave the same on every platform. Other shell syntax, such as pipes and redirects, may behave differently across platforms. See [Environment Variable Prefixes](/guide/run#environment-variable-prefixes) for details.
+Defines the command to run for the task.
+
+::: info
+Vite Task parses simple commands and `&&` chains itself instead of passing them to a shell, so they behave the same on every platform. Other shell syntax, such as pipes or redirects, may behave differently across platforms.
+:::
 
 ```ts [vite.config.ts]
 tasks: {

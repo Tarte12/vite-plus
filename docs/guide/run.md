@@ -7,7 +7,7 @@
 :::
 
 ::: info
-Vite Task parses simple commands and [`&&` chains](#compound-commands) itself instead of passing them to a shell, so they behave the same on every platform. Commands that use other shell syntax, such as pipes or redirects, may behave differently across platforms.
+Vite Task parses simple commands and `&&` chains itself instead of passing them to a shell, so they behave the same on every platform. Other shell syntax, such as pipes or redirects, may behave differently across platforms.
 :::
 
 ## Overview
@@ -272,7 +272,7 @@ vp run: 1/2 cache hit (50%), 2/2 successful, 120ms saved.
 
 ### Environment Variable Prefixes
 
-Because Vite Task parses simple commands itself, environment variable prefixes such as `FOO=bar command` work on every platform, including Windows, without `cross-env`:
+Environment variable prefixes such as `FOO=bar command` work on every platform, without extra tools like `cross-env`:
 
 ```json [package.json]
 {
@@ -285,7 +285,7 @@ Because Vite Task parses simple commands itself, environment variable prefixes s
 A prefix applies only to the command it directly precedes. In `FOO=1 a && b`, `FOO` is set for `a` but not for `b`.
 
 ::: warning
-If a command also uses other shell syntax, such as pipes or redirects, environment variable prefixes may not work on Windows. Verify such commands at runtime, and use `cross-env` if needed.
+Prefixes may not work on every platform when the command also uses other shell syntax.
 :::
 
 ### Nested `vp run`
